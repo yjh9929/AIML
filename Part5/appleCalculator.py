@@ -62,7 +62,9 @@ while capture.isOpened():
     class_name = class_names[index]
     confidence_score = prediction[0][index]
 
-    if confidence_score >=0.7:
+    expected_name = class_names[1]
+
+    if class_name == expected_name and confidence_score >=0.7:
         print('Class:', class_name, end='')
         print('Confidence score:', confidence_score)
 
