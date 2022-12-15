@@ -1,40 +1,43 @@
-# tensorflow 오류 잡기용
-import os
-os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
-
-# 모듈 불러오기
-import cv2
-import tensorflow.keras
+from keras.models import load_model
+from PIL import Image, ImageOps #Install pillow instead of PIL
 import numpy as np
 
-capture = cv2.VideoCapture(0)
+# Disable scientific notation for clarity
+np.set_printoptions(suppress=True)
 
-## 이미지 전처리
-def preprocessing(frame):
-    # 사이즈 조정
-    size = (224, 224)
-    frame_resized = cv2.resize(frame, size, interpolation=cv2.INTER_AREA)
-    
-    # 이미지 정규화
-    frame_normalized = (frame_resized.astype(np.float32) / 127.0) - 1
-    
-    # 이미지 차원 재조정 - 예측을 위해 reshape 해줍니다.
-    frame_reshaped = frame_normalized.reshape((1, 224, 224, 3))
-    
-    return frame_reshaped
+# Load the model
+model = load_model('keras_Model.h5', compile=False)
 
-## 학습된 모델 불러오기
-model_filename = 'keras_model.h5'
-model = tensorflow.keras.models.load_model(model_filename)
+# Load the labels
+class_names = open('labels.txt', 'r').readlines()
 
-# 캡쳐 프레임 사이즈 조절
-capture.set(cv2.CAP_PROP_FRAME_WIDTH, 1920)
-capture.set(cv2.CAP_PROP_FRAME_HEIGHT, 1080)
+# Create the array of the right shape to feed into the keras model
+# The 'length' or number of images you can put into the array is
+# determined by the first position in the shape tuple, in this case 1.
+data = np.ndarray(shape=(1, 224, 224, 3), dtype=np.float32)
 
-while capture.isOpened():
-    success, image = capture.read()
-    cv2.imshow("VideoFrame", image)
-    if cv2.waitKey(1) == ord('q'):
-        break
-capture.release()
+# Replace this with the path to your image
+image = Image.open('45.jpg').convert('RGB')
 
+#resize the image to a 224x224 with the same strategy as in TM2:
+#resizing the image to be at least 224x224 and then cropping from the center
+size = (224, 224)
+image = ImageOps.fit(image, size, Image.Resampling.LANCZOS)
+
+#turn the image into a numpy array
+image_array = np.asarray(image)
+
+# Normalize the image
+normalized_image_array = (image_array.astype(np.float32) / 127.0) - 1
+
+# Load the image into the array
+data[0] = normalized_image_array
+
+# run the inference
+prediction = model.predict(data)
+index = np.argmax(prediction)
+class_name = class_names[index]
+confidence_score = prediction[0][index]
+
+print('Class:', class_name, end='')
+print('Confidence score:', confidence_score)
