@@ -30,12 +30,12 @@ if (b == 0):
     img2 = cv2.imread(files[c], cv2.IMREAD_COLOR)
 
     cv2.imshow("VideoFrame", img1)
-    cv2.waitKey(3000)
+    cv2.waitKey(2000)
     cv2.imshow("VideoFrame", opr)
-    cv2.waitKey(3000)
+    cv2.waitKey(2000)
     cv2.imshow("VideoFrame", img2)
 
-    cv2.waitKey(3000)
+    cv2.waitKey(2000)
     cv2.destroyAllWindows()
     ## 이미지 전처리
     def preprocessing(frame):
@@ -103,7 +103,7 @@ if (b == 0):
     capture.release()
     # 화면에 나타난 윈도우 창을 종료
     cv2.destroyAllWindows()
-elif (b == 1 and a > c):
+elif (b == 1 and a >= c):
     os.chdir('Part5/picture')
 
     files = []
@@ -149,8 +149,8 @@ elif (b == 1 and a > c):
 
 
     # 캡쳐 프레임 사이즈 조절
-    capture.set(cv2.CAP_PROP_FRAME_WIDTH, 160)
-    capture.set(cv2.CAP_PROP_FRAME_HEIGHT, 120)
+    capture.set(cv2.CAP_PROP_FRAME_WIDTH, 1920)
+    capture.set(cv2.CAP_PROP_FRAME_HEIGHT, 1080)
 
     while capture.isOpened():
         success, image = capture.read()
