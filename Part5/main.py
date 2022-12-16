@@ -184,7 +184,7 @@ elif (b == 1 and a >= c):
         if class_name == expected_name and confidence_score >=0.7:
             #print('Class:', class_name, end='')
             #print('Confidence score:', confidence_score)
-            print('the answer is: ', a-c+2)
+            print('the answer is: ', a-c)
             print('You are correct!')
             break
 
